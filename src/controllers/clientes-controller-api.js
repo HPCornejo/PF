@@ -8,7 +8,7 @@ const categoriasAPI = {};
 categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     try {
         const conexion = await miConexion();
-        const [rows] = await conexion.query('SELECT * FROM categorias');
+        const [rows] = await conexion.query('SELECT * FROM categoria');
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
@@ -27,11 +27,11 @@ categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     }
 }
 
-categoriasAPI.getCategoriaPorNombre = async (req=request,res,next)=>{
+categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
     try {
-        const {categoria} = req.params;
+        const {id} = req.params;
         const conexion = await miConexion();
-        const rows = await conexion.query('SELECT * FROM categorias WHERE categoria = ?', [categoria]);
+        const rows = await conexion.query('SELECT * FROM categoria WHERE id = ?', [id]);
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
@@ -50,11 +50,11 @@ categoriasAPI.getCategoriaPorNombre = async (req=request,res,next)=>{
     }
 }
 
-categoriasAPI.deleteCategoriaPorNombre = async(req,res,next)=>{
+categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     try{
-        const { categoria } = req.params;
+        const { id } = req.params;
         const conexion = await miConexion();
-        const resultado = await conexion.query('DELETE FROM categoria WHERE categoria = ?', [categoria]);
+        const resultado = await conexion.query('DELETE FROM categoria WHERE id = ?', [id]);
         if(resultado[0].affectedRows>0){
             res.status(200).json({
                 estado:1,
@@ -73,9 +73,9 @@ categoriasAPI.deleteCategoriaPorNombre = async(req,res,next)=>{
 
 categoriasAPI.postCategoria = async(req=request,res,next)=>{
     try{
-        const { categoria, descripcion }=req.body;
+        const { descripcion, observaciones }=req.body;
         //Confirmacion de solicitud (des, obs)
-        if(categoria == undefined || descripcion == undefined){
+        if(descripcion == undefined || observaciones == undefined){
             //Bad request - Solicitud incorrecta
             res.status(400).json({
                 estado:0,
@@ -83,14 +83,15 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
             }) 
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('INSERT INTO categoria(categoria, descripcion) VALUES(?,?)', [categoria, descripcion]);
+            const resultado = await conexion.query('INSERT INTO categoria(descripcion, observaciones) VALUES(?,?)', [descripcion, observaciones]);
             if(resultado[0].affectedRows>0){
                 res.status(201).json({
                     estado:1, 
                     mensaje:"Categoria creada",
                     categoria:{
-                        categoria:categoria,
-                        descripcion:descripcion
+                        id:resultado[0].insertId,
+                        descripcion:descripcion,
+                        observaciones:observaciones
                     }
                 })
             }else{
@@ -105,26 +106,27 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
     }
 }
 
-categoriasAPI.putCategoriaPorNombre = async(req,res,next)=>{
+categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
     try {
-        const { categoria } = req.params;
-        const { descripcion } = req.body;
-        if( descripcion == undefined){
+        const { id } = req.params;
+        const { descripcion, observaciones } = req.body;
+        if( descripcion == undefined || observaciones == undefined){
             res.status(400).json({
                 estado:0,
                 mensaje:"Solicitud oncorrecta o incompleta"
             })
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('UPDATE categoria SET descripcion = ? WHERE categoria = ?',[categoria,descripcion]);
+            const resultado = await conexion.query('UPDATE categoria SET descripcion = ?, observaciones = ? WHERE id = ?',[descripcion,observaciones,id]);
             if(resultado[0].affectedRows>0){
                 if(resultado[0].changedRows>0){
                     res.status(200).json({
                         estado:1,
                         mensaje:"Categoria actualizada",
                         categoria:{
-                            categoria:categoria,
+                            id:id,
                             descripcion:descripcion,
+                            observaciones:observaciones
                         }
                     })
                 }else{
