@@ -3,23 +3,23 @@ const { request } = require('express');
 const {miConexion} = require('../database/db')
 
 //Estamos definiendo un objeto {objeto}
-const categoriasAPI = {};
+const ventasAPI = {};
 
-categoriasAPI.getTodasCategorias = async (req,res,next)=>{
+ventasAPI.getTodasVentas = async (req,res,next)=>{
     try {
         const conexion = await miConexion();
-        const [rows] = await conexion.query('SELECT * FROM categoria');
+        const [rows] = await conexion.query('SELECT * FROM ventas');
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
                 mensaje:"Registros encontrados",
-                categorias:rows
+                ventas:rows
             })
         }else{
             res.status(404).json({
                 estado: 0,
                 mensaje: "Registro no encontrado",
-                categorias: []
+                ventas: []
             })
         }
     } catch (error) {
@@ -27,22 +27,22 @@ categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     }
 }
 
-categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
+ventasAPI.getVentasPorId = async (req=request,res,next)=>{
     try {
         const {id} = req.params;
         const conexion = await miConexion();
-        const rows = await conexion.query('SELECT * FROM categoria WHERE id = ?', [id]);
+        const rows = await conexion.query('SELECT * FROM ventas WHERE id = ?', [id]);
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
                 mensaje:"Categoria encontrada",
-                categoria:rows[0]
+                ventas:rows[0]
             })
         }else{
             res.status(404).json({
                 estado:0,
                 mensaje:"Categoria no encontrada",
-                categoria:rows
+                ventas:rows
             })
         }
     } catch (error) {
@@ -50,11 +50,11 @@ categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
     }
 }
 
-categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
+ventasAPI.deleteventasPorId = async(req,res,next)=>{
     try{
         const { id } = req.params;
         const conexion = await miConexion();
-        const resultado = await conexion.query('DELETE FROM categoria WHERE id = ?', [id]);
+        const resultado = await conexion.query('DELETE FROM ventas WHERE id = ?', [id]);
         if(resultado[0].affectedRows>0){
             res.status(200).json({
                 estado:1,
@@ -71,11 +71,11 @@ categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     }
 }
 
-categoriasAPI.postCategoria = async(req=request,res,next)=>{
+ventasAPI.postventas = async(req=request,res,next)=>{
     try{
-        const { descripcion, observaciones }=req.body;
+        const { cantidad, factura_id, producto_id }=req.body;
         //Confirmacion de solicitud (des, obs)
-        if(descripcion == undefined || observaciones == undefined){
+        if(cantidad == undefined || factura_id == undefined || producto_id == undefined){
             //Bad request - Solicitud incorrecta
             res.status(400).json({
                 estado:0,
@@ -83,15 +83,16 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
             }) 
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('INSERT INTO categoria(descripcion, observaciones) VALUES(?,?)', [descripcion, observaciones]);
+            const resultado = await conexion.query('INSERT INTO ventas(cantidad, factura_id, producto_id) VALUES(?,?)', [cantidad, factura_id, producto_id]);
             if(resultado[0].affectedRows>0){
                 res.status(201).json({
                     estado:1, 
                     mensaje:"Categoria creada",
-                    categoria:{
+                    ventas:{
                         id:resultado[0].insertId,
-                        descripcion:descripcion,
-                        observaciones:observaciones
+                        cantidad:cantidad,
+                        factura_id:factura_id,
+                        producto_id:producto_id
                     }
                 })
             }else{
@@ -106,27 +107,28 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
     }
 }
 
-categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
+ventasAPI.putventasPorId = async(req,res,next)=>{
     try {
         const { id } = req.params;
-        const { descripcion, observaciones } = req.body;
-        if( descripcion == undefined || observaciones == undefined){
+        const { cantidad, factura_id, producto_id } = req.body;
+        if( cantidad == undefined || factura_id == undefined || producto_id == undefined){
             res.status(400).json({
                 estado:0,
                 mensaje:"Solicitud oncorrecta o incompleta"
             })
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('UPDATE categoria SET descripcion = ?, observaciones = ? WHERE id = ?',[descripcion,observaciones,id]);
+            const resultado = await conexion.query('UPDATE ventas SET cantidad = ?, factura_id = ?, producto_id = ? WHERE id = ?',[cantidad,factura_id,producto_id,id]);
             if(resultado[0].affectedRows>0){
                 if(resultado[0].changedRows>0){
                     res.status(200).json({
                         estado:1,
                         mensaje:"Categoria actualizada",
-                        categoria:{
+                        ventas:{
                             id:id,
-                            descripcion:descripcion,
-                            observaciones:observaciones
+                            cantidad:cantidad,
+                            factura_id:factura_id,
+                            producto_id:producto_id
                         }
                     })
                 }else{
@@ -148,7 +150,7 @@ categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
 }
 
 //Exportar el objeto
-module.exports=categoriasAPI;
+module.exports=ventasAPI;
  
 //CRUD (CREATE(id-POST)-READ(id-GET)-UPDATE(id-PUT)-DELETE(id-DELETE))
 //Leer 1Xid o todas

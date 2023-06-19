@@ -3,23 +3,23 @@ const { request } = require('express');
 const {miConexion} = require('../database/db')
 
 //Estamos definiendo un objeto {objeto}
-const categoriasAPI = {};
+const facturasAPI = {};
 
-categoriasAPI.getTodasCategorias = async (req,res,next)=>{
+facturasAPI.getTodasFacturas = async (req,res,next)=>{
     try {
         const conexion = await miConexion();
-        const [rows] = await conexion.query('SELECT * FROM categoria');
+        const [rows] = await conexion.query('SELECT * FROM facturas');
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
                 mensaje:"Registros encontrados",
-                categorias:rows
+                facturas:rows
             })
         }else{
             res.status(404).json({
                 estado: 0,
                 mensaje: "Registro no encontrado",
-                categorias: []
+                facturas: []
             })
         }
     } catch (error) {
@@ -27,22 +27,22 @@ categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     }
 }
 
-categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
+facturasAPI.getFacturasPorId = async (req=request,res,next)=>{
     try {
         const {id} = req.params;
         const conexion = await miConexion();
-        const rows = await conexion.query('SELECT * FROM categoria WHERE id = ?', [id]);
+        const rows = await conexion.query('SELECT * FROM facturas WHERE id = ?', [id]);
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
                 mensaje:"Categoria encontrada",
-                categoria:rows[0]
+                facturas:rows[0]
             })
         }else{
             res.status(404).json({
                 estado:0,
-                mensaje:"Categoria no encontrada",
-                categoria:rows
+                mensaje:"Facturas no encontrada",
+                facturas:rows
             })
         }
     } catch (error) {
@@ -50,11 +50,11 @@ categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
     }
 }
 
-categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
+facturasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     try{
         const { id } = req.params;
         const conexion = await miConexion();
-        const resultado = await conexion.query('DELETE FROM categoria WHERE id = ?', [id]);
+        const resultado = await conexion.query('DELETE FROM facturas WHERE id = ?', [id]);
         if(resultado[0].affectedRows>0){
             res.status(200).json({
                 estado:1,
@@ -71,11 +71,11 @@ categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     }
 }
 
-categoriasAPI.postCategoria = async(req=request,res,next)=>{
+facturasAPI.postFacturas = async(req=request,res,next)=>{
     try{
-        const { descripcion, observaciones }=req.body;
+        const { nombre, cliente_id }=req.body;
         //Confirmacion de solicitud (des, obs)
-        if(descripcion == undefined || observaciones == undefined){
+        if(nombre == undefined || cliente_id == undefined){
             //Bad request - Solicitud incorrecta
             res.status(400).json({
                 estado:0,
@@ -83,15 +83,15 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
             }) 
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('INSERT INTO categoria(descripcion, observaciones) VALUES(?,?)', [descripcion, observaciones]);
+            const resultado = await conexion.query('INSERT INTO facturas(nombre, cliente_id) VALUES(?,?)', [nombre, cliente_id]);
             if(resultado[0].affectedRows>0){
                 res.status(201).json({
                     estado:1, 
                     mensaje:"Categoria creada",
-                    categoria:{
+                    facturas:{
                         id:resultado[0].insertId,
-                        descripcion:descripcion,
-                        observaciones:observaciones
+                        nombre:nombre,
+                        cliente_id:cliente_id
                     }
                 })
             }else{
@@ -106,27 +106,27 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
     }
 }
 
-categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
+facturasAPI.putFacturasPorId = async(req,res,next)=>{
     try {
         const { id } = req.params;
-        const { descripcion, observaciones } = req.body;
-        if( descripcion == undefined || observaciones == undefined){
+        const { nombre, cliente_id } = req.body;
+        if( nombre == undefined || cliente_id == undefined){
             res.status(400).json({
                 estado:0,
                 mensaje:"Solicitud oncorrecta o incompleta"
             })
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('UPDATE categoria SET descripcion = ?, observaciones = ? WHERE id = ?',[descripcion,observaciones,id]);
+            const resultado = await conexion.query('UPDATE facturas SET nombre = ?, cliente_id = ? WHERE id = ?',[nombre,cliente_id,id]);
             if(resultado[0].affectedRows>0){
                 if(resultado[0].changedRows>0){
                     res.status(200).json({
                         estado:1,
                         mensaje:"Categoria actualizada",
-                        categoria:{
+                        facturas:{
                             id:id,
-                            descripcion:descripcion,
-                            observaciones:observaciones
+                            nombre:nombre,
+                            cliente_id:cliente_id
                         }
                     })
                 }else{
@@ -148,7 +148,7 @@ categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
 }
 
 //Exportar el objeto
-module.exports=categoriasAPI;
+module.exports=facturasAPI;
  
 //CRUD (CREATE(id-POST)-READ(id-GET)-UPDATE(id-PUT)-DELETE(id-DELETE))
 //Leer 1Xid o todas
