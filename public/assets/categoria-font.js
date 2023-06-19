@@ -18,7 +18,7 @@ function crearCategoria() {
       if (result.estado == 1) {
         let categoria = result.categoria;
         // Debemos agregar la categoría a la tabla
-        let tabla = $('#tabla-categorias').DataTable();
+        let tabla = $('#tabla-categoria').DataTable();
         let Botones = generarBotones(categoria.id);
         let nuevoRenglon = tabla.row.add([categoria.id, categoria.categoria, categoria.descripcion, Botones]).node();
         // Agregar el ID del renglón
@@ -43,7 +43,7 @@ function getCategorias(){
         success: function( result ) {
          if(result.estado==1){
             const categorias = result.categorias 
-            let tabla = $('#tabla-categorias').DataTable();
+            let tabla = $('#tabla-categoria').DataTable();
             categorias.forEach(categoria => {
               let Botones = generarBotones(categoria.id);
               let nuevoRenglon = tabla.row.add([categoria.id, categoria.categoria, categoria.descripcion, Botones]).node()
@@ -68,7 +68,7 @@ function borrarCategoria(){
     success: function( result ) {
      if(result.estado==1){
       //Debemos eliminar el renglon de la Data table
-      let tabla =$('#tabla-categorias').DataTable();
+      let tabla =$('#tabla-categoria').DataTable();
       tabla.row('#renglon_'+idSeleccionadoParaEliminar).remove().draw()
      }else{
       alert(result.mensaje)
