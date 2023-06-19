@@ -73,9 +73,9 @@ facturasAPI.deleteCategoriaPorId = async(req,res,next)=>{
 
 facturasAPI.postFacturas = async(req=request,res,next)=>{
     try{
-        const { nombre, cliente_id }=req.body;
+        const { factura, fecha, proveedor }=req.body;
         //Confirmacion de solicitud (des, obs)
-        if(nombre == undefined || cliente_id == undefined){
+        if(nombre == undefined || cliente_id == undefined || proveedor == undefined){
             //Bad request - Solicitud incorrecta
             res.status(400).json({
                 estado:0,

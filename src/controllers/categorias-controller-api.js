@@ -8,7 +8,7 @@ const categoriasAPI = {};
 categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     try {
         const conexion = await miConexion();
-        const [rows] = await conexion.query('SELECT * FROM categorias');
+        const [rows] = await conexion.query('SELECT * FROM categoria');
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
@@ -27,11 +27,11 @@ categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     }
 }
 
-categoriasAPI.getCategoriaPorNombre = async (req=request,res,next)=>{
+categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
     try {
-        const {categoria} = req.params;
+        const {id} = req.params;
         const conexion = await miConexion();
-        const rows = await conexion.query('SELECT * FROM categorias WHERE categoria = ?', [categoria]);
+        const rows = await conexion.query('SELECT * FROM categoria WHERE id = ?', [id]);
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
@@ -50,11 +50,11 @@ categoriasAPI.getCategoriaPorNombre = async (req=request,res,next)=>{
     }
 }
 
-categoriasAPI.deleteCategoriaPorNombre = async(req,res,next)=>{
+categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     try{
-        const { categoria } = req.params;
+        const { id } = req.params;
         const conexion = await miConexion();
-        const resultado = await conexion.query('DELETE FROM categoria WHERE categoria = ?', [categoria]);
+        const resultado = await conexion.query('DELETE FROM categoria WHERE id = ?', [id]);
         if(resultado[0].affectedRows>0){
             res.status(200).json({
                 estado:1,
@@ -89,6 +89,7 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
                     estado:1, 
                     mensaje:"Categoria creada",
                     categoria:{
+                        id:resultado[0].insertId,
                         categoria:categoria,
                         descripcion:descripcion
                     }
@@ -105,26 +106,27 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
     }
 }
 
-categoriasAPI.putCategoriaPorNombre = async(req,res,next)=>{
+categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
     try {
-        const { categoria } = req.params;
-        const { descripcion } = req.body;
-        if( descripcion == undefined){
+        const { id } = req.params;
+        const { categoria, descripcion } = req.body;
+        if( categoria == undefined || descripcion == undefined){
             res.status(400).json({
                 estado:0,
                 mensaje:"Solicitud oncorrecta o incompleta"
             })
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('UPDATE categoria SET descripcion = ? WHERE categoria = ?',[categoria,descripcion]);
+            const resultado = await conexion.query('UPDATE categoria SET categoria = ?, descripcion = ? WHERE id = ?',[categoria,descripcion,id]);
             if(resultado[0].affectedRows>0){
                 if(resultado[0].changedRows>0){
                     res.status(200).json({
                         estado:1,
                         mensaje:"Categoria actualizada",
                         categoria:{
+                            id:id,
                             categoria:categoria,
-                            descripcion:descripcion,
+                            descripcion:descripcion
                         }
                     })
                 }else{
