@@ -3,23 +3,23 @@ const { request } = require('express');
 const {miConexion} = require('../database/db')
 
 //Estamos definiendo un objeto {objeto}
-const categoriasAPI = {};
+const productosAPI = {};
 
-categoriasAPI.getTodasCategorias = async (req,res,next)=>{
+categoriasAPI.getTodosProductos = async (req,res,next)=>{
     try {
         const conexion = await miConexion();
-        const [rows] = await conexion.query('SELECT * FROM categoria');
+        const [rows] = await conexion.query('SELECT * FROM producto');
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
                 mensaje:"Registros encontrados",
-                categorias:rows
+                productos:rows
             })
         }else{
             res.status(404).json({
                 estado: 0,
                 mensaje: "Registro no encontrado",
-                categorias: []
+                producto: []
             })
         }
     } catch (error) {
@@ -27,22 +27,22 @@ categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     }
 }
 
-categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
+categoriasAPI.getProductoPorId = async (req=request,res,next)=>{
     try {
         const {id} = req.params;
         const conexion = await miConexion();
-        const rows = await conexion.query('SELECT * FROM categoria WHERE id = ?', [id]);
+        const rows = await conexion.query('SELECT * FROM producto WHERE id = ?', [id]);
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
-                mensaje:"Categoria encontrada",
-                categoria:rows[0]
+                mensaje:"Producto encontrado",
+                producto:rows[0]
             })
         }else{
             res.status(404).json({
                 estado:0,
-                mensaje:"Categoria no encontrada",
-                categoria:rows
+                mensaje:"Producto no encontrado",
+                producto:rows
             })
         }
     } catch (error) {
@@ -50,20 +50,20 @@ categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
     }
 }
 
-categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
+categoriasAPI.deleteProductoPorId = async(req,res,next)=>{
     try{
         const { id } = req.params;
         const conexion = await miConexion();
-        const resultado = await conexion.query('DELETE FROM categoria WHERE id = ?', [id]);
+        const resultado = await conexion.query('DELETE FROM Producto WHERE id = ?', [id]);
         if(resultado[0].affectedRows>0){
             res.status(200).json({
                 estado:1,
-                mensaje:"Categoria eliminada"
+                mensaje:"Producto eliminado"
             })
         }else{
             res.status(404).json({
                 estado:0,
-                mensaje:"Categoria no encontrada"
+                mensaje:"Producto no encontrado"
             })
         }
     } catch (error) {
@@ -71,7 +71,7 @@ categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     }
 }
 
-categoriasAPI.postCategoria = async(req=request,res,next)=>{
+categoriasAPI.postProducto = async(req=request,res,next)=>{
     try{
         const { descripcion, observaciones }=req.body;
         //Confirmacion de solicitud (des, obs)
@@ -83,21 +83,25 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
             }) 
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('INSERT INTO categoria(descripcion, observaciones) VALUES(?,?)', [descripcion, observaciones]);
+            const resultado = await conexion.query('INSERT INTO productos(nombre, nombre_proveedor, precio,categoria_id:categoria_id,descripcion, observaciones) VALUES(?,?,?,?,?,?)', [descripcion, observaciones]);
             if(resultado[0].affectedRows>0){
                 res.status(201).json({
                     estado:1, 
-                    mensaje:"Categoria creada",
+                    mensaje:"Producto creado",
                     categoria:{
                         id:resultado[0].insertId,
+                        nombre:nombre,
+                        nombre_proveedor:nombre_proveedor,
+                        precio:precio,
+                        categoria_id:categoria_id,
                         descripcion:descripcion,
                         observaciones:observaciones
                     }
-                })
+                }) 
             }else{
                 res.status(500).json({
                     estado:0,
-                    mensaje:"Categoria no registrada. Algo salio mal :("
+                    mensaje:"Producto no registrado. Algo salio mal :("
                 })
             }
         }
@@ -106,7 +110,7 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
     }
 }
 
-categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
+categoriasAPI.putProductoPorId = async(req,res,next)=>{
     try {
         const { id } = req.params;
         const { descripcion, observaciones } = req.body;
@@ -117,28 +121,31 @@ categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
             })
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('UPDATE categoria SET descripcion = ?, observaciones = ? WHERE id = ?',[descripcion,observaciones,id]);
+            const resultado = await conexion.query('UPDATE producto SET descripcion = ?, observaciones = ? WHERE id = ?',[descripcion,observaciones,id]);
             if(resultado[0].affectedRows>0){
                 if(resultado[0].changedRows>0){
                     res.status(200).json({
                         estado:1,
-                        mensaje:"Categoria actualizada",
+                        mensaje:"Producto actualizado",
                         categoria:{
                             id:id,
-                            descripcion:descripcion,
-                            observaciones:observaciones
-                        }
+                        nombre:nombre,
+                        nombre_proveedor:nombre_proveedor,
+                        precio:precio,
+                        categoria_id:categoria_id,
+                        descripcion:descripcion,
+                        observaciones:observaciones}
                     })
                 }else{
                     res.status(200).json({
                         estado:0,
-                        mensaje:"Categoria no actualizada"
+                        mensaje:"Producto no actualizado"
                     })
                 }
             }else{
                 res.status(404).json({
                     estado:0,
-                    mensaje:"Categoria no encontrada"
+                    mensaje:"Producto no encontrado"
                 })
             }
         }
@@ -148,7 +155,7 @@ categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
 }
 
 //Exportar el objeto
-module.exports=categoriasAPI;
+module.exports=productosAPI;
  
 //CRUD (CREATE(id-POST)-READ(id-GET)-UPDATE(id-PUT)-DELETE(id-DELETE))
 //Leer 1Xid o todas
