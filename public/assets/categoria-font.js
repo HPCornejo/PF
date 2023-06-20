@@ -80,8 +80,56 @@ function borrarCategoria(){
 getCategorias()
 function generarBotones(id){
   botones = '<div class="d-flex">'
-  botones += '<a href="#" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>'
-  botones += '<a href="#" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>'
+  botones += '<a href="#" onclick="CTMRaul('+id+')" class="btn btn-danger shadow btn-xs sharp" data-bs-toggle="modal" data-bs-target="#borrar" ><i class="fa fa-trash"></i></a>'
+  botones += '<a href="#" onclick="CTMRaul2('+id+')" class="btn btn-primary shadow btn-xs sharp" data-bs-toggle="modal" data-bs-target="#editar" ><i class="fa fa-trash"></i></a>'
   botones += '</div>'
   return botones
+}
+
+function CTMRaul(id){
+  idSeleccionadoParaEliminar=id
+}
+function CTMRaul2(id){
+  idSeleccionadoParaActualizar=id
+  $.ajax({
+    method:"GET",// metodo
+    url: window.location.origin+"/api/categorias/"+idSeleccionadoParaActualizar, //params (pero este no usara)
+    data: {  }, //Body
+    success: function( result ) {
+     if(result.estado==1){
+        let categoria = result.categoria;
+        document.getElementById('input1').value=categoria.id;
+        document.getElementById('input2').value=categoria.categoria;
+        document.getElementById('input3').value=categoria.descripcion;
+     }else{
+        alert(result.mensaje)
+     }
+    }
+  });
+
+}
+
+function actualizar(){
+  let idcategoria = document.getElementById('input1').value;
+  let categoria = document.getElementById('input2').value;
+  let descripcion = document.getElementById('input3').value;
+
+  $.ajax({
+    method:"PUT",// metodo
+    url: window.location.origin+"/api/categorias/" +idSeleccionadoParaActualizar, //params (pero este no usara)
+    data: { id:idcategoria, categoria:categoria, descripcion:descripcion }, //Body
+    success: function( result ) {
+     if(result.estado==1){
+        let tabla = $('#tabla-categoria').DataTable();
+        let rengT = tabla.row('#renglon_'+idSeleccionadoParaActualizar).data();
+        rengT[0] = idcategoria;
+        rengT[1] = categoria;
+        rengT[2] = descripcion;
+        tabla.row('#renglon_'+idSeleccionadoParaActualizar).data(rengT).draw();
+     }else{
+        alert(result.mensaje)
+     }
+    }
+  });
+
 }

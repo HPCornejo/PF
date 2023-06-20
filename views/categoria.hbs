@@ -233,19 +233,19 @@
 														<div class="row">
 															<div class="mb-3 col-md-6">
 																<label class="form-label">ID_Categoria</label>
-																<input type="number" class="form-control" placeholder="ID de la categoria">
+																<input id="input1" type="number" class="form-control" placeholder="ID de la categoria">
 															</div>
 														</div>
 														<div class="row">
 															<div class="mb-3 col-md-6">
 																<label class="form-label">Nombre de la categoria</label>
-																<input type="text" class="form-control" placeholder="Nombre de la categoria">
+																<input id="input2" type="text" class="form-control" placeholder="Nombre de la categoria">
 															</div>
 														</div>
 														<div class="row">
 															<div class="mb-3 col-md-6">
 																<label class="form-label">Descripción de la categoria</label>
-																<input type="text" class="form-control" placeholder="Descripción">
+																<input id="input3" type="text" class="form-control" placeholder="Descripción">
 															</div>
 														</div>
                                     				</form>                                                   
@@ -271,8 +271,8 @@
 												   
                                                 </div>
                                                 <div class="modal-footer">
-													<button type="button" class="btn btn-danger light btn-sm" data-bs-dismiss="modal">Eliminar</button>
-													<button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+													<button type="button" class="btn btn-danger light btn-sm" data-bs-dismiss="modal" onclick="borrarCategoria()">Eliminar</button>
+													<button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal" onclick="actualizar()">Cancelar</button>
                                                 </div>
                                             </div>
                                         </div>

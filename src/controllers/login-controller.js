@@ -29,7 +29,7 @@ function auth(req, res) {
                     });
                 });
             } else {
-                res.render('../../views/login', { error: 'Error: Usuario no existente' });
+                res.render('login', { error: 'Error: Usuario no existente' });
             }
         });
     });
@@ -38,11 +38,11 @@ function auth(req, res) {
 
 function registro(req, res){
     if(req.session.loggedin != true){
-        res.render('../../views/login');
+        res.render('login');
     }else{
-        res.redirect('/categoria')
+        res.redirect('categoria')
     }
-    res.render('/registro');
+    res.render('registro');
 }
 
 function storeUser(req, res){
