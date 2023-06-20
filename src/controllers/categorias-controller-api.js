@@ -8,7 +8,7 @@ const categoriasAPI = {};
 categoriasAPI.getTodasCategorias = async (req,res,next)=>{
     try {
         const conexion = await miConexion();
-        const [rows] = await conexion.query('SELECT * FROM categoria');
+        const [rows] = await conexion.query('SELECT * FROM categorias');
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
@@ -31,7 +31,7 @@ categoriasAPI.getCategoriaPorId = async (req=request,res,next)=>{
     try {
         const {id} = req.params;
         const conexion = await miConexion();
-        const rows = await conexion.query('SELECT * FROM categoria WHERE id = ?', [id]);
+        const rows = await conexion.query('SELECT * FROM categorias WHERE id = ?', [id]);
         if(rows.length>0){
             res.status(200).json({
                 estado:1,
@@ -54,7 +54,7 @@ categoriasAPI.deleteCategoriaPorId = async(req,res,next)=>{
     try{
         const { id } = req.params;
         const conexion = await miConexion();
-        const resultado = await conexion.query('DELETE FROM categoria WHERE id = ?', [id]);
+        const resultado = await conexion.query('DELETE FROM categorias WHERE id = ?', [id]);
         if(resultado[0].affectedRows>0){
             res.status(200).json({
                 estado:1,
@@ -83,7 +83,7 @@ categoriasAPI.postCategoria = async(req=request,res,next)=>{
             }) 
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('INSERT INTO categoria(categoria, descripcion) VALUES(?,?)', [categoria, descripcion]);
+            const resultado = await conexion.query('INSERT INTO categorias(categoria, descripcion) VALUES(?,?)', [categoria, descripcion]);
             if(resultado[0].affectedRows>0){
                 res.status(201).json({
                     estado:1, 
@@ -117,7 +117,7 @@ categoriasAPI.putCategoriaPorId = async(req,res,next)=>{
             })
         }else{
             const conexion = await miConexion();
-            const resultado = await conexion.query('UPDATE categoria SET categoria = ?, descripcion = ? WHERE id = ?',[categoria,descripcion,id]);
+            const resultado = await conexion.query('UPDATE categorias SET categoria = ?, descripcion = ? WHERE id = ?',[categoria,descripcion,id]);
             if(resultado[0].affectedRows>0){
                 if(resultado[0].changedRows>0){
                     res.status(200).json({

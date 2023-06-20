@@ -1,4 +1,4 @@
-const {createPool} = require('mysql12/promise');
+const {createPool} = require('mysql2/promise');
 
 const conexion = createPool({
     host: process.env.MYSQLHOST || 'localhost',

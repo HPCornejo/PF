@@ -292,26 +292,26 @@
 														<div class="row">
 															<div class="mb-3 col-md-6">
 																<label class="form-label">ID_Categoria</label>
-																<input type="number" class="form-control" placeholder="ID de la categoria">
+																<input id="idCategoriaAlta" type="number" class="form-control" placeholder="ID de la categoria">
 															</div>
 														</div>
 														<div class="row">
 															<div class="mb-3 col-md-6">
 																<label class="form-label">Nombre de la categoria</label>
-																<input type="text" class="form-control" placeholder="Nombre de la categoria">
+																<input id="categoriaAlta" type="text" class="form-control" placeholder="Nombre de la categoria">
 															</div>
 														</div>
 														<div class="row">
 															<div class="mb-3 col-md-6">
 																<label class="form-label">Descripción de la categoria</label>
-																<input type="text" class="form-control" placeholder="Descripción">
+																<input id="descripcionCateAlta" type="text" class="form-control" placeholder="Descripción">
 															</div>
 														</div>
                                     				</form>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger light btn-sm" data-bs-dismiss="modal">Cerrar</button>
-                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Agregar</button>
+                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal" onclick="crearCategoria()">Agregar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -423,7 +423,7 @@
 	
     <!--Script propios-->
 
-	<script src="/public/js/my-js/font-categorias.js"></script>
+	<script src="assets/categoria-font.js"></script>
     
 </body>
 </html>

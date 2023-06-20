@@ -20,6 +20,8 @@ const app = express();
 
 const loginRoutes = require('./src/routes/login-routes');
 
+const categoriasRoutes = require('./src/routes/categorias-routes-api')
+
 app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials',()=>{});
 
@@ -53,6 +55,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 //Rutas - temporales
+app.use(categoriasRoutes)
+
 app.get('/',(req,res)=>{
     if(req.session.loggedin == true){
         res.render('categoria', {name: req.session.name});
