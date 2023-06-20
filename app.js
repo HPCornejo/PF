@@ -90,6 +90,8 @@ app.get('/categoria',(req,res)=>{
     res.render('categoria');
 })
 
+app.use('/', loginRoutes);
+
 app.get('*',(req,res)=>{
     res.render('404');
 })

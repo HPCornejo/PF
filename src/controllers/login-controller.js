@@ -4,7 +4,7 @@ function login(req, res){
     if(req.session.loggedin != true){
         res.render('login');
     }else{
-        res.redirect('/categoria')
+        res.redirect('categoria')
     }
     res.render('login');
 }
@@ -18,7 +18,7 @@ function auth(req, res) {
                 userdata.forEach(element => {
                     bcrypt.compare(data.password, element.password, (err, isMatch) => {
                         if (!isMatch) {
-                            res.render('../../views/login', { error: 'Error: Contraseña incorrecta' });
+                            res.render('login', { error: 'Error: Contraseña incorrecta' });
                         } else {
                             
                             req.session.loggedin = true;
